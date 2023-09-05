@@ -1,0 +1,10 @@
+name: bb_base
+channels: 
+  - defaults
+dependencies:
+  - python>=3.0
+  - pip
+  - pip:
+    - requests
+    - python-pushsafer
+    - python-dotenv
