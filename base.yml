@@ -10,3 +10,4 @@ dependencies:
     - python-dotenv
     - selenium
     - webdriver_manager
+    - tabulate
