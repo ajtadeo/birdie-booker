@@ -49,6 +49,7 @@ class Alert:
       
   def save(self):
     """ this method saves the setting values for an instance of Alert to alerts.db, then sets self.id to the primary key """
+    self.createTable()
     sql = """
       INSERT INTO `alerts` (`location`, `numPlayers`, `date`, `startTime`, `endTime`)
       VALUES (?, ?, ?, ?, ?)

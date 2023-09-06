@@ -5,8 +5,11 @@ import datetime
 import argparse
 from db import CONN, CURSOR
 from tabulate import tabulate
+from sqlite3 import OperationalError
 
 load_dotenv()
+
+# TODO: set CRON job for every 5 minutes
 
 def main():
   parser = argparse.ArgumentParser()
@@ -16,19 +19,35 @@ def main():
   args = parser.parse_args()
   
   if args.scrape:
-    print("Scraping existing Alerts...")
-    records = CURSOR.execute("SELECT * FROM alerts").fetchall()
-    for row in records:
-      print(f"scraping for alert {row[0]}...")
-      # scrape(row[1])
+    try:
+      print("Scraping existing Alerts...")
+      records = CURSOR.execute("SELECT * FROM alerts").fetchall()
+      if len(records) == 0:
+        print("No Alerts found.")
+        return
+      for row in records:
+        print(f"scraping for alert {row[0]}...")
+        # scrape(row[1])
+    except OperationalError:
+      print("Creating the `alerts` table...")
+      Alert.createTable()
+      print("No Alerts found.")
   elif args.list:
-    records = CURSOR.execute("SELECT * FROM alerts").fetchall()
+    try:
+      records = CURSOR.execute("SELECT * FROM alerts").fetchall()
+    except OperationalError:
+      print("Creating the `alerts` table...")
+      Alert.createTable()
+      records = CURSOR.execute("SELECT * FROM alerts").fetchall()
     headers = ["ID", "Location", "Num Players", "Date", "Start Time", "End Time"]
     print(tabulate(records, headers, tablefmt="grid"))
   else:
-    print("Creating an Alert...")
-    myAlert = Alert()
-    myAlert.save()
+    try:
+      print("Creating an Alert...")
+      myAlert = Alert()
+      myAlert.save()
+    except Exception as e:
+      print(e)
     
 def scrape(location, numPlayers, date, startTime, endTime):
   if location == 0:
