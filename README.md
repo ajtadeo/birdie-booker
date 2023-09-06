@@ -1,9 +1,9 @@
 # Birdie Booker <!-- omit in toc -->
-This terminal-based application is a clone of [TeeTime Alerts](https://teetimealerts.io/) built using Selenium for web scraping and PushOver for sending mobile device notifications.
+This terminal-based application is a clone of [TeeTime Alerts](https://teetimealerts.io/) built using Selenium for web scraping and Pushover for sending mobile device notifications.
 
 ### Table of Contents <!-- omit in toc -->
 - [Setup](#setup)
-  - [Device](#device)
+  - [Pushover](#pushover)
   - [Server](#server)
   - [Installing Dependencies](#installing-dependencies)
 - [Available Commands](#available-commands)
@@ -14,21 +14,22 @@ This terminal-based application is a clone of [TeeTime Alerts](https://teetimeal
 
 ## Setup
 
-### Device
-1. Install [PushOver](https://pushover.net/) on your mobile device and create an account.
-2. Create `.env` inside `birdie-booker` and add the following credentials associated:
-    ```env
-    PUSHOVER_API_KEY='secr3t'   # Birdie Booker application key
-    PUSHOVER_USER_KEY='secr3t'  # User account key
-    ```
+### Pushover
+1. Go to [Pushover](https://pushover.net/) and create an account. Note the user key displayed on your account dashboard.
+2. Create an application "Birdie Booker". Note the application key displayed on the application dashboard.
+3. Install Pushover on your mobile device and login.
     
 ### Server
-
 1. Install python3 and [Chrome](https://www.google.com/chrome/) for web scraping on your machine
 1. Clone the repository and cd into it.
     ```sh
     git clone https://github.com/ajtadeo/birdie-booker.git
     cd birdie-booker
+    ```
+2. Create `.env` inside `birdie-booker` and add the following credentials:
+    ```env
+    PUSHOVER_API_KEY='secr3t'   # Birdie Booker application key
+    PUSHOVER_USER_KEY='secr3t'  # User key
     ```
 3. Set up the virtual environment.
     * Create the virutal environment.
@@ -47,7 +48,7 @@ This terminal-based application is a clone of [TeeTime Alerts](https://teetimeal
   ```
   chmod +x main.py
   ```
-5. Set up the CRON job to be run every 5 minutes.
+1. Set up the CRON job to be run every 5 minutes.
     * It's recommended to use a dedicated machine for running CRON's. I personally use a Raspberry Pi to host this application.
     * Add `main.py -s` to the list of CRON jobs using `crontab -e`
   
