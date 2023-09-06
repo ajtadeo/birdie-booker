@@ -1,11 +1,20 @@
 #!/usr/bin/env python3
 from dotenv import load_dotenv
 from alert import Alert
-import datetime
+from datetime import date, time, datetime
 import argparse
 from db import CONN, CURSOR
 from tabulate import tabulate
 from sqlite3 import OperationalError
+import os
+import requests
+from driver import driver
+
+# selenium/chrome driver
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 load_dotenv()
 
@@ -20,18 +29,21 @@ def main():
   
   if args.scrape:
     try:
+      print(f"Starting script at: {datetime.now()}\n\n")
       print("Scraping existing Alerts...")
       records = CURSOR.execute("SELECT * FROM alerts").fetchall()
+      headers = ["ID", "Location", "Num Players", "Date", "Start Time", "End Time"]
+      print(tabulate(records, headers, tablefmt="grid"))
       if len(records) == 0:
-        print("No Alerts found.")
         return
       for row in records:
-        print(f"scraping for alert {row[0]}...")
-        # scrape(row[1])
+        print(f"Scraping for Alert {row[0]}...")
+        # location, numPlayers, date, startTime, endTime
+        scrape(int(row[1]), int(row[2]), date.fromisoformat(row[3]), time.fromisoformat(row[4]), time.fromisoformat(row[5]))
     except OperationalError:
       print("Creating the `alerts` table...")
       Alert.createTable()
-      print("No Alerts found.")
+      print("Found 0 Alerts.")
   elif args.list:
     try:
       records = CURSOR.execute("SELECT * FROM alerts").fetchall()
@@ -60,17 +72,7 @@ def recreationPark18_scraper(numPlayers, date, startTime, endTime):
       
   print('Starting Recreation Park 18 web scraper...')
   try:
-    # set up options
-    options = Options()
-    options.add_argument('--headless=new')
-    options.add_argument("--disable-gpu")
-    options.add_argument('--blink-settings=imagesEnabled=false')
-
-    # set up driver
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
     driver.get(url)
-
-    # wait for page to load, then scrape all available events
     try:
       WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.CSS_SELECTOR, ".reservation-group-item"))
@@ -94,8 +96,8 @@ def recreationPark18_scraper(numPlayers, date, startTime, endTime):
       
       eventTime = time.fromisoformat(f"{hour}:{minute}")
       if eventTime > startTime and eventTime < endTime:
-        print(f"Found event at {eventTime.strftime('%I:%M %p')}. Sending a notification to PushOver...")
-        sendMessage(name, eventTime.strftime('%I:%M %p'), url)
+        print(f"Found event on {date.strftime('%B %d, %Y')} @ {eventTime.strftime('%I:%M %p')}. Sending a notification to PushOver...")
+        sendMessage(name, date, eventTime, url)
         break 
       
   except Exception as err:
@@ -103,12 +105,12 @@ def recreationPark18_scraper(numPlayers, date, startTime, endTime):
 
   print("Done.")
   
-def sendMessage(location, time, bookingURL):
+def sendMessage(location, date, time, bookingURL):
   url = 'https://api.pushover.net/1/messages.json'
   params = {
     "token": os.environ.get("PUSHOVER_API_KEY"),
     "user": os.environ.get("PUSHOVER_USER_KEY"),
-    "message": f"A booking is available at {location} @ {time}!",
+    "message": f"A booking is available at {location} on {date.strftime('%B %d, %Y')} @ {time.strftime('%I:%M %p')}!",
     "url" : bookingURL,
     "url_title" : 'Book Now',
   }

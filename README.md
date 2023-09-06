@@ -44,17 +44,35 @@ This terminal-based application is a clone of [TeeTime Alerts](https://teetimeal
         ```sh
         conda activate bb_base
         ```
-4. Add executable permissions to `main.py`.
-  ```
-  chmod +x main.py
-  ```
-1. Set up the CRON job to be run every 5 minutes.
-    * It's recommended to use a dedicated machine for running CRON's. I personally use a Raspberry Pi to host this application.
-    * Add `main.py -s` to the list of CRON jobs using `crontab -e`
-  
+4. Add executable permissions to `main.py`: `chmod +x main.py`
+5. Set up the CRON job to be run every 5 minutes.
+    * Open `~/.bashrc`. If there is no conda initialization, copy the following code and fill in the paths to Anaconda/Miniconda on your machine
+
+        ```sh
+        # >>> conda initialize >>>
+        # !! Contents within this block are managed by 'conda init' !!
+        __conda_setup="$('"/path/to/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+        if [ $? -eq 0 ]; then
+            eval "$__conda_setup"
+        else
+            if [ -f "/path/to/miniconda3/etc/profile.d/conda.sh" ]; then
+                . "/path/to/miniconda3/etc/profile.d/conda.sh"
+            else
+                export PATH="/path/to/miniconda3/bin:$PATH"
+            fi
+        fi
+        unset __conda_setup
+        # <<< conda initialize <<<
         ```
-        5 * * * * python3 /path/to/main.py -s > /path/to/birdie-booker/cron.log 2>&1
+
+    * Create a CRON job by entering the following code in the file opened by `crontab -e`
         ```
+        SHELL=/bin/bash
+        BASH_ENV=~/.bashrc
+        */5 * * * * conda activate bb_base; python3 /path/to/birdie-booker/main.py -s > /path/to/birdie-booker/cron.log 2>&1; conda deactivate
+        ```
+    * Make sure the `*/5 * * * * ...` command is all on one line, otherwise `crontab` will complain.
+    * Check that the CRON job was created using `crontab -l`
 
 ### Installing Dependencies
 1. Update dependencies under `pip` in `base.yml`.

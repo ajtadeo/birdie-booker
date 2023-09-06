@@ -1,17 +1,5 @@
 from datetime import date, time
 from location import Location
-import os
-import requests
-
-# chrome driver/selenium
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.common.exceptions import TimeoutException
 
 # sqlite3
 from db import CONN, CURSOR
