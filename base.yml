@@ -8,3 +8,5 @@ dependencies:
     - requests
     - python-pushsafer
     - python-dotenv
+    - selenium
+    - webdriver_manager
