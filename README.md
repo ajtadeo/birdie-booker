@@ -47,6 +47,13 @@ This terminal-based application is a clone of [TeeTime Alerts](https://teetimeal
   ```
   chmod +x main.py
   ```
+5. Set up the CRON job to be run every 5 minutes.
+    * It's recommended to use a dedicated machine for running CRON's. I personally use a Raspberry Pi to host this application.
+    * Add `main.py -s` to the list of CRON jobs using `crontab -e`
+  
+        ```
+        5 * * * * python3 /path/to/main.py -s > /path/to/birdie-booker/cron.log 2>&1
+        ```
 
 ### Installing Dependencies
 1. Update dependencies under `pip` in `base.yml`.
