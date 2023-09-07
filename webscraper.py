@@ -41,7 +41,7 @@ class Webscraper:
     url = 'https://api.pushover.net/1/messages.json'
     params = {
       "token": os.environ.get("PUSHOVER_API_KEY"),
-      "user": os.environ.get("PUSHOVER_GROUP_KEY"),
+      "user": os.environ.get("PUSHOVER_USER_KEY"),
       "message": f"A booking is available at {locationName} on {date.strftime('%B %d, %Y')} @ {time.strftime('%I:%M %p')}!",
       "url" : bookingURL,
       "url_title" : 'Book Now',

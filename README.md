@@ -18,6 +18,7 @@ This terminal-based application is a clone of [TeeTime Alerts](https://teetimeal
 1. Go to [Pushover](https://pushover.net/) and create an account. Note the user key displayed on your account dashboard.
 2. Create an application "Birdie Booker". Note the application key displayed on the application dashboard.
 3. Install Pushover on your mobile device and login.
+4. (Optional) In the application dashboard, create a subscription to allow multiple people to join the app. In later steps, use the group key instead of the user key.
     
 ### Server
 1. Install python3 and [Chrome](https://www.google.com/chrome/) for web scraping on your machine
@@ -29,7 +30,7 @@ This terminal-based application is a clone of [TeeTime Alerts](https://teetimeal
 2. Create `.env` inside `birdie-booker` and add the following credentials:
     ```env
     PUSHOVER_API_KEY='secr3t'   # Birdie Booker application key
-    PUSHOVER_USER_KEY='secr3t'  # User key
+    PUSHOVER_USER_KEY='secr3t'  # User key or Group key if using a subscription
     ```
 3. Set up the virtual environment.
     * Create the virutal environment.
