@@ -18,13 +18,13 @@ class Webscraper:
     
     # set up options
     options = uc.ChromeOptions()
-    options.binary_location = "/Users/ajtadeo/chromedriver-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
+    options.binary_location = os.environ.get("CHROME_BINARY_PATH")
     options.add_argument('--headless=new')
     options.add_argument("--disable-gpu")
     options.add_argument('--blink-settings=imagesEnabled=false')
 
     # set up driver
-    self.driver = uc.Chrome(service=Service(executable_path='/Users/ajtadeo/chromedriver-mac-x64/chromedriver'), options=options)
+    self.driver = uc.Chrome(service=Service(executable_path=os.environ.get("CHROMEDRIVER_PATH")), options=options)
     
     # set up webdriverwait
     self.wait = WebDriverWait(self.driver, 5)

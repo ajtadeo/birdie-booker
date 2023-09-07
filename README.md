@@ -20,24 +20,30 @@ This terminal-based application is a clone of [TeeTime Alerts](https://teetimeal
     
 ### Server
 1. Install Python 3.7 on your machine.
-1. Clone the repository and cd into it.
+2. Install the latest Chrome for Testing and Chromedriver versions for your OS.
+    * Download Chrome for Testing and Chromedriver from [this site](https://googlechromelabs.github.io/chrome-for-testing/) to your home directory.
+    * Move `Chrome for Testing` into the same directory as `chromedriver`, should be something like `chromedriver-os`
+    * Append `export PATH=/path/to/chromedriver-os` to `.bashrc`
+3. Clone the repository and cd into it.
     ```sh
     git clone https://github.com/ajtadeo/birdie-booker.git
     cd birdie-booker
     ```
-2. Create `.env` inside `birdie-booker` and add the following credentials:
+4. Create `.env` inside `birdie-booker` and add the following credentials:
     ```env
     PUSHOVER_API_KEY='secr3t'   # Birdie Booker application key
     PUSHOVER_USER_KEY='secr3t'  # User key or Group key if using a subscription
+    CHROME_BINARY_PATH="/path/to/Google Chrome for Testing"
+    CHROMEDRIVER_PATH="/path/to/chromedriver"
     ```
-3. Set up the virtual environment using venv.
+5. Set up the virtual environment using venv.
      ```sh
      python3 -m venv venv
      source venv/bin/activate
      pip3 install -r requirements.txt
      ```
-4. Add executable permissions to `main.py`: `chmod +x main.py`
-5. Set up the CRON job to be run every 5 minutes.
+6. Add executable permissions to `main.py`: `chmod +x main.py`
+7. Set up the CRON job to be run every 5 minutes.
     * Create a CRON job by entering the following code in the file opened by `crontab -e`
         ```
         SHELL=/bin/bash
