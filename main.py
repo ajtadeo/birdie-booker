@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from dotenv import load_dotenv
 from alert import Alert
 from datetime import date, time, datetime
