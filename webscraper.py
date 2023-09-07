@@ -41,18 +41,18 @@ class Webscraper:
     url = 'https://api.pushover.net/1/messages.json'
     params = {
       "token": os.environ.get("PUSHOVER_API_KEY"),
-      "user": os.environ.get("PUSHOVER_USER_KEY"),
+      "user": os.environ.get("PUSHOVER_GROUP_KEY"),
       "message": f"A booking is available at {locationName} on {date.strftime('%B %d, %Y')} @ {time.strftime('%I:%M %p')}!",
       "url" : bookingURL,
       "url_title" : 'Book Now',
     }
 
-    # try:
-    #   r = requests.post(url, params=params)
-    #   r.raise_for_status()
-    #   print(r.json())
-    # except requests.exceptions.RequestException as e:
-    #   raise SystemExit(e)
+    try:
+      r = requests.post(url, params=params)
+      r.raise_for_status()
+      print(r.json())
+    except requests.exceptions.RequestException as e:
+      raise SystemExit(e)
       
   def recreationPark18_scraper(self, numPlayers, date, startTime, endTime):
     """ Scrapes Recreation Park 18 website and sends a notification if an alert exists """

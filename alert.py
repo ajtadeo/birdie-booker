@@ -38,7 +38,6 @@ class Alert:
       
   def save(self):
     """ this method saves the setting values for an instance of Alert to alerts.db, then sets self.id to the primary key """
-    self.createTable()
     sql = """
       INSERT INTO `alerts` (`location`, `numPlayers`, `date`, `startTime`, `endTime`)
       VALUES (?, ?, ?, ?, ?)
@@ -114,7 +113,7 @@ class Alert:
       
     # print settings
     headers = ["Location", "Num Players", "Date", "Start Time", "End Time"]
-    records = [[Location(self.location).name, self.numPlayers, self.date, self.startTime, self.endTime]]
+    records = [[location[self.location], self.numPlayers, self.date, self.startTime, self.endTime]]
     print(tabulate(records, headers, tablefmt="grid"))
     
     # confirm settings
@@ -125,13 +124,3 @@ class Alert:
       result = input("Confirm these settings? (y/n): ")
     if result.lower() == "n":
       updateSettings()
-      
-  # def printSettings(self):
-  #   msg = ("-------------------\n"
-  #         f"Location:\t{Location(self.location).name}\n"
-  #         f"Players:\t{self.numPlayers}\n"
-  #         f"Date:\t\t{self.date}\n"
-  #         f"Start Time:\t{self.startTime}\n"
-  #         f"End Time:\t{self.endTime}\n"
-  #         "-------------------")
-  #   print(msg)

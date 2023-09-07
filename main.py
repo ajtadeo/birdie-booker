@@ -26,15 +26,22 @@ def main():
       print("Creating an Alert...\n\n")
       myAlert = Alert()
       myAlert.save()
-    except Exception as e:
-      print(e)
+    except OperationalError as e:
+      print("`alerts` table not found. Creating table...")
+      Alert.createTable()
+      myAlert.save()
       
 def scrapeMode():
   print(f"Starting script at: {datetime.now()}\n\n")
   
   # print Alerts
-  print("Scraping existing Alerts...")
-  records = CURSOR.execute("SELECT * FROM alerts").fetchall()
+  try:
+    records = CURSOR.execute("SELECT * FROM alerts").fetchall()
+  except OperationalError:
+    print("`alerts` table not found. Creating table...")
+    Alert.createTable()
+    return
+    
   headers = ["ID", "Location", "Num Players", "Date", "Start Time", "End Time"]
   print(tabulate(records, headers, tablefmt="grid"))
   if len(records) == 0:
@@ -46,10 +53,8 @@ def scrapeMode():
     for row in records:
       print(f"\nScraping for Alert {row[0]}...")
       webscraper.scrape(int(row[1]), int(row[2]), date.fromisoformat(row[3]), time.fromisoformat(row[4]), time.fromisoformat(row[5]))
-  except OperationalError:
-    print("Creating the `alerts` table...")
-    Alert.createTable()
-    print("Found 0 Alerts.")
+  except Exception as err:
+    print(err)
   finally:
     webscraper.stop()
     
@@ -57,9 +62,9 @@ def listMode():
   try:
     records = CURSOR.execute("SELECT * FROM alerts").fetchall()
   except OperationalError:
-    print("Creating the `alerts` table...")
+    print("`alerts` table not found. Creating table...")
     Alert.createTable()
-    records = CURSOR.execute("SELECT * FROM alerts").fetchall()
+    return
   headers = ["ID", "Location", "Num Players", "Date", "Start Time", "End Time"]
   print(tabulate(records, headers, tablefmt="grid"))
     
