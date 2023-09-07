@@ -1,5 +1,6 @@
 from datetime import date, time
-from location import Location
+from location import location
+from tabulate import tabulate
 
 # sqlite3
 from db import CONN, CURSOR
@@ -9,7 +10,7 @@ class Alert:
   # responsibility of the entire class, not individual instances
   # NOTE: date is a special keyword in SQL, so we have to surround the col name with backticks ``
   @classmethod
-  def createTable(self):
+  def createTable(cls):
     sql = """
       CREATE TABLE IF NOT EXISTS `alerts` (
         `id` INTEGER PRIMARY KEY,
@@ -51,13 +52,14 @@ class Alert:
     # get location
     while True:
       try:
-        for loc in Location:
-          print(f"{loc.value}) {loc.name}")
+        for loc in location.keys():
+          print(f"{loc}) {location[loc]}")
         self.location = int(input("Enter the location ID: "))
-        if self.location < 0 or self.location > len(Location) - 1:
+        if self.location < 0 or self.location > len(location) - 1:
           raise ValueError
       except:
-        print(f"\nSorry, location ID must be an integer between 0 and {len(Location) - 1}")
+        print(f"\nSorry, location ID must be an integer between 0 and {len(location) - 1}")
+        continue
       else:
         break
       
@@ -110,28 +112,26 @@ class Alert:
       else:
         break
       
+    # print settings
+    headers = ["Location", "Num Players", "Date", "Start Time", "End Time"]
+    records = [[Location(self.location).name, self.numPlayers, self.date, self.startTime, self.endTime]]
+    print(tabulate(records, headers, tablefmt="grid"))
+    
     # confirm settings
-    confirmMsg = ("-------------------\n"
-                  f"Location:\t{Location(self.location).name}\n"
-                  f"Players:\t{self.numPlayers}\n"
-                  f"Date:\t\t{self.date}\n"
-                  f"Start Time:\t{self.startTime}\n"
-                  f"End Time:\t{self.endTime}\n"
-                  "-------------------\n"
-                  "Confirm these settings? (y/n): ")
-    result = input(confirmMsg)
+    result = input("Confirm these settings? (y/n): ")
     while result != "n" and result != "y":
       print("\nSorry, that input is invalid.")
-      result = input(confirmMsg)
+      print(tabulate(records, headers, tablefmt="grid"))
+      result = input("Confirm these settings? (y/n): ")
     if result.lower() == "n":
       updateSettings()
       
-  def printSettings(self):
-    msg = ("-------------------\n"
-          f"Location:\t{Location(self.location).name}\n"
-          f"Players:\t{self.numPlayers}\n"
-          f"Date:\t\t{self.date}\n"
-          f"Start Time:\t{self.startTime}\n"
-          f"End Time:\t{self.endTime}\n"
-          "-------------------")
-    print(msg)
+  # def printSettings(self):
+  #   msg = ("-------------------\n"
+  #         f"Location:\t{Location(self.location).name}\n"
+  #         f"Players:\t{self.numPlayers}\n"
+  #         f"Date:\t\t{self.date}\n"
+  #         f"Start Time:\t{self.startTime}\n"
+  #         f"End Time:\t{self.endTime}\n"
+  #         "-------------------")
+  #   print(msg)

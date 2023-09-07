@@ -1,4 +1,3 @@
-from enum import Enum
-
-class Location(Enum):
-  RECREATION_PARK_18 = 0
+location = {
+  0: 'Recreation Park 18 Golf Course'
+}

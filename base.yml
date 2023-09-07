@@ -11,3 +11,4 @@ dependencies:
     - selenium
     - webdriver_manager
     - tabulate
+    - undetected-chromedriver
