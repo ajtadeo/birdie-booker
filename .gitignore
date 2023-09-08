@@ -1,5 +1,8 @@
 .env
+.env.prod
 .vscode/
 __pycache__
 alerts.db
 *.log
+venv/
+__pycache__

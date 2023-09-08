@@ -4,13 +4,11 @@ This terminal-based application is a clone of [TeeTime Alerts](https://teetimeal
 ### Table of Contents <!-- omit in toc -->
 - [Setup](#setup)
   - [Pushover](#pushover)
-  - [Server](#server)
-  - [Installing Dependencies](#installing-dependencies)
-- [Available Commands](#available-commands)
-  - [`./main.py`](#mainpy)
-  - [`./main.py [-l | --list]`](#mainpy--l----list)
-  - [`./main.py [-s | --scrape]`](#mainpy--s----scrape)
-
+  - [Docker](#docker)
+  - [Helpful Docker Commands](#helpful-docker-commands)
+    - [`docker logs [container name]`](#docker-logs-container-name)
+    - [`docker ps -a`](#docker-ps--a)
+    - [`docker image list`](#docker-image-list)
 
 ## Setup
 
@@ -20,88 +18,69 @@ This terminal-based application is a clone of [TeeTime Alerts](https://teetimeal
 3. Install Pushover on your mobile device and login.
 4. (Optional) In the application dashboard, create a subscription to allow multiple people to join the app. In later steps, use the group key instead of the user key.
     
-### Server
-1. Install python3 and [Chrome](https://www.google.com/chrome/) for web scraping on your machine
+### Docker
+To run in the production environment, replace `compose.dev.yml` with `compose.prod.yml`
+
 1. Clone the repository and cd into it.
     ```sh
     git clone https://github.com/ajtadeo/birdie-booker.git
     cd birdie-booker
     ```
-2. Create `.env` inside `birdie-booker` and add the following credentials:
+2. Start the server.
+    ```
+    docker compose -f compose.dev.yml up -d
+    ```
+3. Open Birdie Booker in your browser
+    * Dev: `[raspberry pi IP]:5000`
+    * Production: `[raspberry pi IP]:4000`
+4. Stop the server.
+    ```
+    docker compose -f compose.dev.yml down -v
+    ```
+
+### Helpful Docker Commands
+
+#### `docker logs [container name]`
+View a container's logs.
+
+#### `docker ps -a`
+List all containers, including inactive ones.
+
+#### `docker image list`
+List all images
+
+<!-- ### Terminal (deprecated)
+2. Install the latest Chrome for Testing and Chromedriver versions for your OS.
+    * Download Chrome for Testing and Chromedriver from [this site](https://googlechromelabs.github.io/chrome-for-testing/) to your home directory.
+    * Move `Chrome for Testing` into the same directory as `chromedriver`, should be something like `chromedriver-os`
+    * Append `export PATH=/path/to/chromedriver-os` to `.bashrc`
+3. Clone the repository and cd into it.
+    ```sh
+    git clone https://github.com/ajtadeo/birdie-booker.git
+    cd birdie-booker
+    ```
+4. Create `.env` inside `birdie-booker` and add the following credentials:
     ```env
     PUSHOVER_API_KEY='secr3t'   # Birdie Booker application key
     PUSHOVER_USER_KEY='secr3t'  # User key or Group key if using a subscription
+    CHROME_BINARY_PATH="/path/to/Google Chrome for Testing"
+    CHROMEDRIVER_PATH="/path/to/chromedriver"
     ```
-3. Set up the virtual environment.
-    * Create the virutal environment.
-        ```sh
-        conda env create -f base.yml
-        ```
-    * Verify that the virtual environment was created correctly.
-        ```sh
-        conda info --envs
-        ```
-    * Activate the virtual environment.
-        ```sh
-        conda activate bb_base
-        ```
-4. Add executable permissions to `main.py`: `chmod +x main.py`
-5. Set up the CRON job to be run every 5 minutes.
-    * Open `~/.bashrc`. If there is no conda initialization, copy the following code and fill in the paths to Anaconda/Miniconda on your machine
-
-        ```sh
-        # >>> conda initialize >>>
-        # !! Contents within this block are managed by 'conda init' !!
-        __conda_setup="$('"/path/to/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
-        if [ $? -eq 0 ]; then
-            eval "$__conda_setup"
-        else
-            if [ -f "/path/to/miniconda3/etc/profile.d/conda.sh" ]; then
-                . "/path/to/miniconda3/etc/profile.d/conda.sh"
-            else
-                export PATH="/path/to/miniconda3/bin:$PATH"
-            fi
-        fi
-        unset __conda_setup
-        # <<< conda initialize <<<
-        ```
-
+5. Set up the virtual environment using venv.
+     ```sh
+     python3 -m venv venv
+     source venv/bin/activate
+     pip3 install -r requirements.txt
+     ```
+6. Set up the CRON job to be run every 5 minutes.
     * Create a CRON job by entering the following code in the file opened by `crontab -e`
         ```
         SHELL=/bin/bash
         BASH_ENV=~/.bashrc
-        */5 * * * * conda activate bb_base; python3 /path/to/birdie-booker/main.py -s > /path/to/birdie-booker/cron.log 2>&1; conda deactivate
+        */5 * * * * cd /path/to/birdie-booker; source venv/bin/activate; python3 /path/to/birdie-booker/main.py -s > /path/to/birdie-booker/cron.log 2>&1; deactivate
         ```
     * Make sure the `*/5 * * * * ...` command is all on one line, otherwise `crontab` will complain.
     * Check that the CRON job was created using `crontab -l`
-
-### Installing Dependencies
-1. Update dependencies under `pip` in `base.yml`.
-2. Deactivate the virtual environment if it is currently running.
-    ```sh
-    conda deactivate
-    ```
-3. Update the virtual environment. 
-    * If you are removing a dependency, removing and recreating the virtual environment is necessary since `--prune` does not work as of August 9 2023. 
-        ```sh
-        conda remove --name bb_base --all
-        conda env create -f base.yml
-        ```
-    * Otherwise, update the virtual environment as normal.
-        ```sh
-        conda env update -f base.yml
-        ```
-4. Verify that the virtual environment was updated correctly.
-    ```sh
-    conda info --envs
-    ```
-5. Activate the virtual environment.
-    ```sh
-    conda activate bb_base
-    ```
-6. Verify that the new dependency was added to the virtual environment.
-    ```sh
-    pip list --local
 
 ## Available Commands
 
@@ -112,4 +91,4 @@ Creates an Alert and stores it in the database.
 Lists the Alerts currently in the database.
 
 ### `./main.py [-s | --scrape]`
-Runs the web scrapers fro all Alerts currently in the database.
+Runs the web scrapers fro all Alerts currently in the database. -->
