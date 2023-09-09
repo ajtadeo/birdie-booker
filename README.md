@@ -26,14 +26,29 @@ To run in the production environment, replace `compose.dev.yml` with `compose.pr
     git clone https://github.com/ajtadeo/birdie-booker.git
     cd birdie-booker
     ```
-2. Start the server.
+3. Create `.env.dev` and `.env.prod`
+   
+   `.env.dev`
+   ```env
+   FLASK_APP=app/__init__.py
+   FLASK_DEBUG=1
+   PORT=5000
+   ```
+
+   `.env.prod`
+   ```env
+   FLASK_APP=app/__init__.py
+   FLASK_DEBUG=0
+   PORT=4000
+   ```
+4. Start the server.
     ```
     docker compose -f compose.dev.yml up -d
     ```
-3. Open Birdie Booker in your browser
+5. Open Birdie Booker in your browser
     * Dev: `[raspberry pi IP]:5000`
     * Production: `[raspberry pi IP]:4000`
-4. Stop the server.
+6. Stop the server.
     ```
     docker compose -f compose.dev.yml down -v
     ```
