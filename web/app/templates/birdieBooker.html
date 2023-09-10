@@ -1,0 +1,32 @@
+{% extends 'index.html' %}
+
+{% block styleSheet%}<link rel="stylesheet" href="{{ url_for('static', filename='css/birdieBooker.css') }}">{% endblock %}
+
+{% block navBirdieBooker%}active{% endblock %}
+
+{% block contentTitle %}Birdie Booker Alerts{% endblock %}
+
+{% block contentCardList %}
+  {% for alert in data %}
+    <div class='content-card'>
+      <h2 class='content-card-title'>Alert {{alert[0]}}: {{ alert[1] }}</h2>
+      <div class='content-card-item-list'>
+        <div class='content-card-item'>
+            <img src={{ url_for("static", filename="img/person.svg")}} width="25px"></img>
+            <p>{{ alert[2] }}</p>
+        </div>
+        <div class='content-card-item'>
+          <img src={{ url_for("static", filename="img/date.svg")}} width="25px"></img>
+          <p>{{ alert[3] }}</p>
+        </div>
+        <div class='content-card-item'>
+          <img src={{ url_for("static", filename="img/time.svg")}} width="25px"></img>
+          <p>{{ alert[4] }} - {{alert[5] }}</p>
+        </div>
+        {% if alert[6]|int() == 1 %}
+          <p class="notice">Expired</p>
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
+{% endblock %}

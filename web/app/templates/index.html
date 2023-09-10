@@ -4,13 +4,30 @@
 <head>
   <meta charset="UTF-8">
   <link rel="stylesheet" href="{{ url_for('static', filename= 'css/index.css') }}">
-  <title>Birdie Booker</title>
+  {% block styleSheet %}{% endblock %}
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Roboto:ital@0;1&display=swap" rel="stylesheet"> 
+  <title>Web Scraper 9000</title>
 </head>
 
 <body>
-  <h1>Dashboard</h1>
-  <p>Alerts list here</p>
-  <p>Log here</p>
+  <div class="menu">
+    <h3 class='menu-title'>Web Scraper 9000</h3>
+    <ul class='menu-item-list'>
+      <li class={% block navBirdieBooker %}{% endblock %}>
+        <a href={{ url_for('birdieBooker') }}>Birdie Booker</a>
+      </li>
+    </ul>
+  </div>
+  <div class="content">
+    <h1 class='content-title'>{% block contentTitle %}{% endblock%}</h1>
+    <div class='content-card-list'>
+      {% if (data is defined) and data %}
+        {% block contentCardList %} {% endblock %}
+      {% else %}
+        <p class="notice">No alerts found.</p>
+      {% endif %}
+    </div>
+  </div>
 </body>
 
 </html>
