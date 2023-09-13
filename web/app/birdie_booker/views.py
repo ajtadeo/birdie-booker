@@ -31,10 +31,10 @@ def dashboard():
 	conn.close()
 
 	# get contentAdder options
-	players = [i for i in range(1, 5)]
+	numPlayers = [i for i in range(1, 5)]
 	times = []
 	start = datetime(2000, 1, 1, 0)
-	for i in range(24):
-		times.append((start + timedelta(minutes=30*i)).strftime("%H:%M"))
+	for i in range(48):
+		times.append((start + timedelta(minutes=30*i)).strftime("%I:%M%p"))
 
-	return render_template("birdie_booker.html", data=alerts)
+	return render_template("birdie_booker.html", data=alerts, times=times, numPlayers=numPlayers)
