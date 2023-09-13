@@ -1,5 +1,5 @@
 services:
-  web-dev:
+  web:
     build: ./web
     command: python manage.py run -h 0.0.0.0
     volumes:

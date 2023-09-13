@@ -1,6 +1,6 @@
-{% extends 'index.html' %}
+{% extends 'app.html' %}
 
-{% block styleSheet%}<link rel="stylesheet" href="{{ url_for('static', filename='css/birdieBooker.css') }}">{% endblock %}
+{% block styleSheet%}{% endblock %}
 
 {% block navBirdieBooker%}active{% endblock %}
 
@@ -15,7 +15,7 @@
 <div class='content-card-item-list'>
   <div class='content-card-item'>
       <img src={{ url_for("static", filename="img/person.svg")}} width="25px"></img>
-      <input type="text" name="numPlayers">
+      <input type="text" name="numPlayers" id='datepicker'>
   </div>
   <div class='content-card-item'>
     <img src={{ url_for("static", filename="img/date.svg")}} width="25px"></img>
