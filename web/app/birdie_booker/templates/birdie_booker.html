@@ -77,13 +77,13 @@
       {% if alert[6] == 0 %}
         <td>No</td>
       {% else %}
-        <td class='error'>Yes</td>
+        <td class='expired'>Yes</td>
       {% endif %}
       <td>
-        <form method='POST' action={{ url_for('birdie-booker.delete') }}> 
+        <form method='POST' action={{ url_for('birdie-booker.delete') }} class='delete_button'> 
           {{ delete_form.csrf_token }}
           {{ delete_form.id(value=alert[0], class_='hidden') }}
-          <input type='image' name='delete_button' src={{ url_for('static', filename='img/delete.svg') }} alt='Delete alert' width="20px">
+          <input type='image' src={{ url_for('static', filename='img/delete.svg') }} alt='Delete alert' width="20px">
         </form>
       </td>
     </tr>

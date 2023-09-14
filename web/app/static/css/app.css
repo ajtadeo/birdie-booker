@@ -79,3 +79,16 @@ input[type=submit]:hover {
 .hidden {
   display: none;
 }
+
+tr:hover .delete_button {
+  visibility: visible;
+}
+
+.delete_button {
+  visibility: hidden;
+}
+
+.expired {
+  color: red;
+  font-weight: bold;
+}

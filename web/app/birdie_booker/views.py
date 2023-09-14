@@ -25,7 +25,7 @@ def get_alerts():
 	return alerts
 
 def save_alert(location, numPlayers, date, startTime, endTime, isExpired):
-	print(f"Saving Alert: {location}, {numPlayers}, {date}, {startTime}, {endTime}, {isExpired}")
+	print(f"Saving alert: {location}, {numPlayers}, {date}, {startTime}, {endTime}, {isExpired}")
 	sql = """
 	INSERT INTO `alerts` (`location`, `numPlayers`, `date`, `startTime`, `endTime`, `isExpired`)
 	VALUES (?, ?, ?, ?, ?, ?)
@@ -42,9 +42,27 @@ def save_alert(location, numPlayers, date, startTime, endTime, isExpired):
 		print(err)
 
 def delete_alert(id):
-	print(f"Deleting Alert: {id}")
+	print(f"Deleting alert: {id}")
 	sql = f"""
 	DELETE FROM `alerts`
+	WHERE id = {id}
+	"""
+	try:
+		path = os.path.dirname(__file__)
+		conn = sqlite3.connect(os.path.join(path, "alerts.db"))
+		cursor = conn.cursor()
+		cursor.execute(sql)
+		conn.commit()
+		conn.close()
+	except Exception as err:
+		print("Deleting alert from DB failed.")
+		print(err)
+
+def set_expired_alert(id):
+	print(f"Setting expired alert: {id}")
+	sql = f"""
+	UPDATE `alerts`
+	SET `isExpired` = 1
 	WHERE id = {id}
 	"""
 	try:
@@ -95,6 +113,12 @@ class DeleteForm(FlaskForm):
 @birdie_booker.route("/")
 def index():
 	alerts = get_alerts()
+	print(alerts)
+	# save_alert(0, 4, 'Wed 09/13/2023', '07:00 AM', '08:00 AM', 0)
+ 
+	for alert in alerts:
+		if alert[6] == 0 and datetime.strptime(alert[3], "%a %m/%d/%Y").date() < datetime.today().date():
+			set_expired_alert(alert[0])
  
 	# register forms
 	add_form = AddForm()
