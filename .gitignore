@@ -6,3 +6,4 @@ alerts.db
 *.log
 venv/
 __pycache__
+.flaskenv

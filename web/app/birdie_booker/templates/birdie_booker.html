@@ -13,6 +13,7 @@
 
 {% block contentAdder %}
 <form method='POST' action={{ url_for('birdie-booker.birdie_booker_view') }}>
+  {{ form.csrf_token }}
   <table>
     <tr>
       <th>Location</th>
@@ -39,6 +40,16 @@
       </td>
     </tr>
   </table>
+  {% if form.errors %}
+    <h4 class='errors-title'>Oops, your submission had errors.</h4>
+    <ul class="errors">
+        {% for field_name, field_errors in form.errors|dictsort if field_errors %}
+            {% for error in field_errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        {% endfor %}
+    </ul>
+  {% endif %}
   <input type='submit' value="Add Alert">
 </form>
 {% endblock %}
@@ -54,7 +65,7 @@
     <th>End Time</th>
     <th>Expired?</th>
   </tr>
-  {% for alert in alerts %}
+  {% for alert in data %}
     <tr>
       <td>{{ alert[0] }}</td>
       <td>{{ alert[1] }}</td>
@@ -63,6 +74,7 @@
       <td>{{ alert[4] }}</td>
       <td>{{ alert[5] }}</td>
       <td>{{ alert[6] }}</td>
-    </table>
-  {% endfor %}
+    </tr>
+    {% endfor %}
+  </table>
 {% endblock %}

@@ -10,6 +10,10 @@
   text-align: center;
 }
 
+.content-adder table {
+  margin-bottom: 10px;
+}
+
 .content-adder tr:first-child {
   background-color: #F6F6F6;
   text-align: left;
@@ -59,4 +63,15 @@ input[type=submit] {
 input[type=submit]:hover {
   background-color: white;
   color: #1b2c23;
+}
+
+.errors-title {
+  color: red;
+  margin-bottom: 0px;
+}
+
+.errors {
+  color: red;
+  list-style: none;
+  padding: 0;
 }
