@@ -114,8 +114,9 @@ class DeleteForm(FlaskForm):
 def index():
 	alerts = get_alerts()
 	print(alerts)
-	# save_alert(0, 4, 'Wed 09/13/2023', '07:00 AM', '08:00 AM', 0)
- 
+	# save_alert(0, 4, 'Wed 09/13/2023', '07:00 AM', '08:00 AM', 0) # used for testing expired alerts
+
+	# date is column 6, id is column 0
 	for alert in alerts:
 		if alert[6] == 0 and datetime.strptime(alert[3], "%a %m/%d/%Y").date() < datetime.today().date():
 			set_expired_alert(alert[0])
