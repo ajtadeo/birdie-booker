@@ -9,7 +9,7 @@
 
 {% block navBirdieBooker%}active{% endblock %}
 
-{% block contentTitle %}Birdie Booker Alerts{% endblock %}
+{% block contentTitle %}Birdie Booker{% endblock %}
 
 {% block contentAdder %}
 <form method='POST' action={{ url_for('birdie-booker.birdie_booker_view') }}>
@@ -68,7 +68,7 @@
   {% for alert in data %}
     <tr>
       <td>{{ alert[0] }}</td>
-      <td>{{ alert[1] }}</td>
+      <td>{{ locations[alert[1]|int][1] }}</td>
       <td>{{ alert[2] }}</td>
       <td>{{ alert[3] }}</td>
       <td>{{ alert[4] }}</td>

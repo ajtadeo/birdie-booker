@@ -71,6 +71,9 @@ def birdie_booker_view():
 	conn, cursor = getDB()
 	alerts = conn.execute("SELECT * FROM `alerts`").fetchall()
 	conn.close()
+
+	print(alerts[0][1])
+	print(LOCATIONS[int(alerts[0][1])][1])
  
 	# handle form submission
 	form = AlertForm()
@@ -86,4 +89,4 @@ def birdie_booker_view():
 		return redirect(url_for("birdie-booker.birdie_booker_view"))
 
 	# TODO: alerts not showing up , possibly because of None value in the database. need to crate validation functions
-	return render_template("birdie_booker.html", data=alerts, form=form)
+	return render_template("birdie_booker.html", data=alerts, form=form, locations=LOCATIONS)
