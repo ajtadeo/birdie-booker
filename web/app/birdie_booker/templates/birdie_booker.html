@@ -1,0 +1,68 @@
+{% extends 'app.html' %}
+
+{% block head %}
+<link href='https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/ui-lightness/jquery-ui.css' rel='stylesheet'>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script src={{ url_for('static', filename='js/birdie_booker.js') }}></script>
+{% endblock %}
+
+{% block navBirdieBooker%}active{% endblock %}
+
+{% block contentTitle %}Birdie Booker Alerts{% endblock %}
+
+{% block contentAdder %}
+<form method='POST' action={{ url_for('birdie-booker.birdie_booker_view') }}>
+  <table>
+    <tr>
+      <th>Location</th>
+      <th>Players</th>
+      <th>Date</th>
+      <th>Start Time</th>
+      <th>End Time</th>
+    </tr>
+    <tr>
+      <td>
+        <div>{{ form.location() }}</div>
+      </td>
+      <td>
+        <div>{{ form.numPlayers() }}</div>
+      </td>
+      <td>
+        <div>{{ form.date() }}</div>
+      </td>
+      <td>
+        <div>{{ form.startTime() }}</div>
+      </td>
+      <td>
+        <div>{{ form.endTime() }}</div>
+      </td>
+    </tr>
+  </table>
+  <input type='submit' value="Add Alert">
+</form>
+{% endblock %}
+
+{% block contentCardList %}
+<table>
+  <tr>
+    <th>Alert ID</th>
+    <th>Location</th>
+    <th>Players</th>
+    <th>Date</th>
+    <th>Start Time</th>
+    <th>End Time</th>
+    <th>Expired?</th>
+  </tr>
+  {% for alert in alerts %}
+    <tr>
+      <td>{{ alert[0] }}</td>
+      <td>{{ alert[1] }}</td>
+      <td>{{ alert[2] }}</td>
+      <td>{{ alert[3] }}</td>
+      <td>{{ alert[4] }}</td>
+      <td>{{ alert[5] }}</td>
+      <td>{{ alert[6] }}</td>
+    </table>
+  {% endfor %}
+{% endblock %}

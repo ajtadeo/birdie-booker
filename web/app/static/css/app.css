@@ -5,8 +5,19 @@
 .content-adder {
   padding: 30px;
   border-radius: 7px;
-  box-shadow: 0px 4px 17px 0px rgba(0, 0, 0, 0.10);
+  box-shadow: 0px 4px 17px 0px rgba(0, 0, 0, 0.20);
   margin-bottom: 40px;
+  text-align: center;
+}
+
+.content-adder tr:first-child {
+  background-color: #F6F6F6;
+  text-align: left;
+  color: #1b2c23;
+}
+
+.content-adder tr {
+  background-color: white;
 }
 
 .content-card-list {
@@ -15,34 +26,37 @@
   gap: 30px;
 }
 
-.content-card-list .content-card:last-child{
-  border-bottom: none;
-  margin-bottom: 0px;
+table{
+  border-collapse: collapse;
+  width: 100%;
+  border-radius: 7px;
 }
 
-.content-card {
-  border-bottom: 1px solid rgb(193, 193, 193);
+tr:nth-child(odd) {
+  background-color: #F6F6F6;
 }
 
-.content-card-title {
-  margin-bottom: 10px;
-  margin-top: 0px;
+td, th{
+  padding: 10px;
+  text-align: left;
 }
 
-.content-card-item {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
+tr:first-child {
+  background-color: #1b2c23;
+  color: white;
 }
 
-.content-card-item p {
-  margin: 0px;
+input[type=submit] {
+  background-color: #1b2c23;
+  color: white;
+  border: solid #1b2c23 3px;
+  padding: 7px 20px;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
-.content-card-item-list {
-  display: flex;
-  flex-direction: row;
-  gap: 25px;
-  margin-bottom: 20px;
+input[type=submit]:hover {
+  background-color: white;
+  color: #1b2c23;
 }
