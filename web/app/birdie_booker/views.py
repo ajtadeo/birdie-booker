@@ -3,7 +3,7 @@ import sqlite3
 from flask import Blueprint, render_template, redirect, url_for
 from datetime import datetime, timedelta
 from flask_wtf import FlaskForm
-from wtforms import Form, DateField, SelectField, TimeField
+from wtforms import Form, DateField, SelectField, TimeField, IntegerField
 from wtforms.validators import InputRequired, ValidationError
 
 LOCATIONS = [
@@ -12,25 +12,50 @@ LOCATIONS = [
 
 birdie_booker = Blueprint("birdie-booker", __name__, template_folder='templates')
 
-def getDB():
-	path = os.path.dirname(__file__)
-	conn = sqlite3.connect(os.path.join(path, "alerts.db"))
-	cursor = conn.cursor()
-	return conn, cursor
+def get_alerts():
+	try:
+		path = os.path.dirname(__file__)
+		conn = sqlite3.connect(os.path.join(path, "alerts.db"))
+		cursor = conn.cursor()
+		alerts = conn.execute("SELECT * FROM `alerts`").fetchall()
+		conn.close()
+	except Exception as err:
+		print("Fetching alerts from DB failed.")
+		print(err)
+	return alerts
 
-def save(location, numPlayers, date, startTime, endTime, isExpired):
+def save_alert(location, numPlayers, date, startTime, endTime, isExpired):
 	print(f"Saving Alert: {location}, {numPlayers}, {date}, {startTime}, {endTime}, {isExpired}")
 	sql = """
 	INSERT INTO `alerts` (`location`, `numPlayers`, `date`, `startTime`, `endTime`, `isExpired`)
 	VALUES (?, ?, ?, ?, ?, ?)
 	"""
 	try:
-		conn, cursor = getDB()
+		path = os.path.dirname(__file__)
+		conn = sqlite3.connect(os.path.join(path, "alerts.db"))
+		cursor = conn.cursor()
 		cursor.execute(sql, (location, numPlayers, date, startTime, endTime, isExpired))
 		conn.commit()
 		conn.close()
 	except Exception as err:
-		print("Saving to DB failed.")
+		print("Saving alert to DB failed.")
+		print(err)
+
+def delete_alert(id):
+	print(f"Deleting Alert: {id}")
+	sql = f"""
+	DELETE FROM `alerts`
+	WHERE id = {id}
+	"""
+	try:
+		path = os.path.dirname(__file__)
+		conn = sqlite3.connect(os.path.join(path, "alerts.db"))
+		cursor = conn.cursor()
+		cursor.execute(sql)
+		conn.commit()
+		conn.close()
+	except Exception as err:
+		print("Deleting alert from DB failed.")
 		print(err)
  
 def validate_date(form, date):
@@ -41,7 +66,7 @@ def validate_endTime(form, endTime):
 	if endTime.data <= form.startTime.data:
 		raise ValidationError("End Time must be after start time.")
  
-class AlertForm(FlaskForm):
+class AddForm(FlaskForm):
 	location = SelectField('Location', [
 		InputRequired()
 	], choices=LOCATIONS)
@@ -64,29 +89,53 @@ class AlertForm(FlaskForm):
 		validate_endTime
   ])
 
+class DeleteForm(FlaskForm):
+	id = IntegerField()
 
-@birdie_booker.route("/", methods=['GET', 'POST'])
-def birdie_booker_view():
-	# get alerts
-	conn, cursor = getDB()
-	alerts = conn.execute("SELECT * FROM `alerts`").fetchall()
-	conn.close()
-
-	print(alerts[0][1])
-	print(LOCATIONS[int(alerts[0][1])][1])
+@birdie_booker.route("/")
+def index():
+	alerts = get_alerts()
  
-	# handle form submission
-	form = AlertForm()
-	if form.validate_on_submit():
-		location = form.location.data
-		numPlayers = form.numPlayers.data
-		date = form.date.data.strftime("%a %m/%d/%Y")
-		startTime = form.startTime.data.strftime("%I:%M %p")
-		endTime = form.endTime.data.strftime("%I:%M %p")
+	# register forms
+	add_form = AddForm()
+	delete_form = DeleteForm()
+	
+	return render_template("birdie_booker.html", data=alerts, add_form=add_form, delete_form=delete_form, locations=LOCATIONS)
+
+@birdie_booker.route("/add", methods=['POST'])
+def add():
+	alerts = get_alerts()
+
+	# register forms
+	add_form = AddForm()
+	delete_form = DeleteForm()
+
+	# handle add_form
+	if add_form.validate_on_submit():
+		location = add_form.location.data
+		numPlayers = add_form.numPlayers.data
+		date = add_form.date.data.strftime("%a %m/%d/%Y")
+		startTime = add_form.startTime.data.strftime("%I:%M %p")
+		endTime = add_form.endTime.data.strftime("%I:%M %p")
 		isExpired = 0  # form validation requires date to be un-expired
 
-		save(location=location, numPlayers=numPlayers, date=date, startTime=startTime, endTime=endTime, isExpired=isExpired)
-		return redirect(url_for("birdie-booker.birdie_booker_view"))
+		save_alert(location=location, numPlayers=numPlayers, date=date, startTime=startTime, endTime=endTime, isExpired=isExpired)
+		return redirect(url_for("birdie-booker.index"))
 
-	# TODO: alerts not showing up , possibly because of None value in the database. need to crate validation functions
-	return render_template("birdie_booker.html", data=alerts, form=form, locations=LOCATIONS)
+	return render_template("birdie_booker.html", data=alerts, add_form=add_form, delete_form=delete_form, locations=LOCATIONS)
+
+@birdie_booker.route("/delete", methods=['POST'])
+def delete():
+	alerts = get_alerts()
+
+	# register forms
+	add_form = AddForm()
+	delete_form = DeleteForm()
+
+	# handle delete_form
+	if delete_form.is_submitted():
+		id = delete_form.id.data
+		delete_alert(id)
+		return redirect(url_for("birdie-booker.index"))
+	
+	return render_template("birdie_booker.html", data=alerts, add_form=add_form, delete_form=delete_form, locations=LOCATIONS)

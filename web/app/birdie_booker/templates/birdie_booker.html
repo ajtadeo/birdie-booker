@@ -12,8 +12,8 @@
 {% block contentTitle %}Birdie Booker{% endblock %}
 
 {% block contentAdder %}
-<form method='POST' action={{ url_for('birdie-booker.birdie_booker_view') }}>
-  {{ form.csrf_token }}
+<form method='POST' action={{ url_for('birdie-booker.add') }}>
+  {{ add_form.csrf_token }}
   <table>
     <tr>
       <th>Location</th>
@@ -24,26 +24,26 @@
     </tr>
     <tr>
       <td>
-        <div>{{ form.location() }}</div>
+        <div>{{ add_form.location() }}</div>
       </td>
       <td>
-        <div>{{ form.numPlayers() }}</div>
+        <div>{{ add_form.numPlayers() }}</div>
       </td>
       <td>
-        <div>{{ form.date() }}</div>
+        <div>{{ add_form.date() }}</div>
       </td>
       <td>
-        <div>{{ form.startTime() }}</div>
+        <div>{{ add_form.startTime() }}</div>
       </td>
       <td>
-        <div>{{ form.endTime() }}</div>
+        <div>{{ add_form.endTime() }}</div>
       </td>
     </tr>
   </table>
-  {% if form.errors %}
+  {% if add_form.errors %}
     <h4 class='errors-title'>Oops, your submission had errors.</h4>
     <ul class="errors">
-        {% for field_name, field_errors in form.errors|dictsort if field_errors %}
+        {% for field_name, field_errors in add_form.errors|dictsort if field_errors %}
             {% for error in field_errors %}
                 <li>{{ error }}</li>
             {% endfor %}
@@ -64,6 +64,7 @@
     <th>Start Time</th>
     <th>End Time</th>
     <th>Expired?</th>
+    <th></th>
   </tr>
   {% for alert in data %}
     <tr>
@@ -73,7 +74,18 @@
       <td>{{ alert[3] }}</td>
       <td>{{ alert[4] }}</td>
       <td>{{ alert[5] }}</td>
-      <td>{{ alert[6] }}</td>
+      {% if alert[6] == 0 %}
+        <td>No</td>
+      {% else %}
+        <td class='error'>Yes</td>
+      {% endif %}
+      <td>
+        <form method='POST' action={{ url_for('birdie-booker.delete') }}> 
+          {{ delete_form.csrf_token }}
+          {{ delete_form.id(value=alert[0], class_='hidden') }}
+          <input type='image' name='delete_button' src={{ url_for('static', filename='img/delete.svg') }} alt='Delete alert' width="20px">
+        </form>
+      </td>
     </tr>
     {% endfor %}
   </table>
