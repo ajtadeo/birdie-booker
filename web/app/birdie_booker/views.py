@@ -1,80 +1,15 @@
-import os
-import sqlite3
 from flask import Blueprint, render_template, redirect, url_for
-from datetime import datetime, timedelta
+from datetime import datetime
 from flask_wtf import FlaskForm
 from wtforms import Form, DateField, SelectField, TimeField, IntegerField
 from wtforms.validators import InputRequired, ValidationError
+from .alert import get_alerts, save_alert, delete_alert, set_expired_alert
 
 LOCATIONS = [
 	(0, 'Recreation Park 18 Golf Course')
 ]
 
 birdie_booker = Blueprint("birdie-booker", __name__, template_folder='templates')
-
-def get_alerts():
-	try:
-		path = os.path.dirname(__file__)
-		conn = sqlite3.connect(os.path.join(path, "alerts.db"))
-		cursor = conn.cursor()
-		alerts = conn.execute("SELECT * FROM `alerts`").fetchall()
-		conn.close()
-	except Exception as err:
-		print("Fetching alerts from DB failed.")
-		print(err)
-	return alerts
-
-def save_alert(location, numPlayers, date, startTime, endTime, isExpired):
-	print(f"Saving alert: {location}, {numPlayers}, {date}, {startTime}, {endTime}, {isExpired}")
-	sql = """
-	INSERT INTO `alerts` (`location`, `numPlayers`, `date`, `startTime`, `endTime`, `isExpired`)
-	VALUES (?, ?, ?, ?, ?, ?)
-	"""
-	try:
-		path = os.path.dirname(__file__)
-		conn = sqlite3.connect(os.path.join(path, "alerts.db"))
-		cursor = conn.cursor()
-		cursor.execute(sql, (location, numPlayers, date, startTime, endTime, isExpired))
-		conn.commit()
-		conn.close()
-	except Exception as err:
-		print("Saving alert to DB failed.")
-		print(err)
-
-def delete_alert(id):
-	print(f"Deleting alert: {id}")
-	sql = f"""
-	DELETE FROM `alerts`
-	WHERE id = {id}
-	"""
-	try:
-		path = os.path.dirname(__file__)
-		conn = sqlite3.connect(os.path.join(path, "alerts.db"))
-		cursor = conn.cursor()
-		cursor.execute(sql)
-		conn.commit()
-		conn.close()
-	except Exception as err:
-		print("Deleting alert from DB failed.")
-		print(err)
-
-def set_expired_alert(id):
-	print(f"Setting expired alert: {id}")
-	sql = f"""
-	UPDATE `alerts`
-	SET `isExpired` = 1
-	WHERE id = {id}
-	"""
-	try:
-		path = os.path.dirname(__file__)
-		conn = sqlite3.connect(os.path.join(path, "alerts.db"))
-		cursor = conn.cursor()
-		cursor.execute(sql)
-		conn.commit()
-		conn.close()
-	except Exception as err:
-		print("Deleting alert from DB failed.")
-		print(err)
  
 def validate_date(form, date):
 	if date.data < datetime.today().date():
@@ -115,13 +50,7 @@ def index():
 	alerts = get_alerts()
 	print(alerts)
 	# save_alert(0, 4, 'Wed 09/13/2023', '07:00 AM', '08:00 AM', 0) # used for testing expired alerts
-
-	# date is column 6, id is column 0
-	for alert in alerts:
-		if alert[6] == 0 and datetime.strptime(alert[3], "%a %m/%d/%Y").date() < datetime.today().date():
-			set_expired_alert(alert[0])
  
-	# register forms
 	add_form = AddForm()
 	delete_form = DeleteForm()
 	
@@ -130,19 +59,17 @@ def index():
 @birdie_booker.route("/add", methods=['POST'])
 def add():
 	alerts = get_alerts()
-
-	# register forms
 	add_form = AddForm()
 	delete_form = DeleteForm()
 
-	# handle add_form
+	# form validation requires date to be un-expired, so isExpired is hardcoded to 0=False
 	if add_form.validate_on_submit():
 		location = add_form.location.data
 		numPlayers = add_form.numPlayers.data
 		date = add_form.date.data.strftime("%a %m/%d/%Y")
 		startTime = add_form.startTime.data.strftime("%I:%M %p")
 		endTime = add_form.endTime.data.strftime("%I:%M %p")
-		isExpired = 0  # form validation requires date to be un-expired
+		isExpired = 0
 
 		save_alert(location=location, numPlayers=numPlayers, date=date, startTime=startTime, endTime=endTime, isExpired=isExpired)
 		return redirect(url_for("birdie-booker.index"))
@@ -152,12 +79,9 @@ def add():
 @birdie_booker.route("/delete", methods=['POST'])
 def delete():
 	alerts = get_alerts()
-
-	# register forms
 	add_form = AddForm()
 	delete_form = DeleteForm()
 
-	# handle delete_form
 	if delete_form.is_submitted():
 		id = delete_form.id.data
 		delete_alert(id)

@@ -8,7 +8,7 @@ cursor = conn.cursor()
 sql = """
 CREATE TABLE IF NOT EXISTS `alerts` (
 	`id` INTEGER PRIMARY KEY,
-	`location` TEXT,
+	`location` INTEGER,
 	`numPlayers` INTEGER,
 	`date` TEXT,
 	`startTime` TEXT,
