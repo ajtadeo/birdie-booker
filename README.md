@@ -9,6 +9,10 @@ This terminal-based application is a clone of [TeeTime Alerts](https://teetimeal
     - [`docker logs [container name]`](#docker-logs-container-name)
     - [`docker ps -a`](#docker-ps--a)
     - [`docker image list`](#docker-image-list)
+- [Available Commands](#available-commands)
+  - [`python3 main.py`](#python3-mainpy)
+  - [`python3 main.py [-l | --list]`](#python3-mainpy--l----list)
+  - [`python3 main.py [-s | --scrape]`](#python3-mainpy--s----scrape)
 
 ## Setup
 
@@ -99,11 +103,11 @@ List all images
 
 ## Available Commands
 
-### `./main.py`
+### `python3 main.py`
 Creates an Alert and stores it in the database.
 
-### `./main.py [-l | --list]`
+### `python3 main.py [-l | --list]`
 Lists the Alerts currently in the database.
 
-### `./main.py [-s | --scrape]`
-Runs the web scrapers fro all Alerts currently in the database. -->
+### `python3 main.py [-s | --scrape]`
+Runs the web scrapers fro all Alerts currently in the database.
