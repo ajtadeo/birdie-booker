@@ -4,7 +4,11 @@ This terminal-based application is a clone of [TeeTime Alerts](https://teetimeal
 ### Table of Contents <!-- omit in toc -->
 - [Setup](#setup)
   - [Pushover](#pushover)
-  - [Server](#server)
+  - [Docker](#docker)
+  - [Helpful Docker Commands](#helpful-docker-commands)
+    - [`docker logs [container name]`](#docker-logs-container-name)
+    - [`docker ps -a`](#docker-ps--a)
+    - [`docker image list`](#docker-image-list)
 - [Available Commands](#available-commands)
   - [`python3 main.py`](#python3-mainpy)
   - [`python3 main.py [-l | --list]`](#python3-mainpy--l----list)
@@ -18,32 +22,76 @@ This terminal-based application is a clone of [TeeTime Alerts](https://teetimeal
 3. Install Pushover on your mobile device and login.
 4. (Optional) In the application dashboard, create a subscription to allow multiple people to join the app. In later steps, use the group key instead of the user key.
     
-### Server
-1. Install Python 3.7 on your machine.
-2. Install the latest Chrome for Testing and Chromedriver versions for your OS.
-    * Download Chrome for Testing and Chromedriver from [this site](https://googlechromelabs.github.io/chrome-for-testing/) to your home directory.
-    * Move `Chrome for Testing` into the same directory as `chromedriver`, should be something like `chromedriver-os`
-    * Append `export PATH=/path/to/chromedriver-os` to `.bashrc`
-3. Clone the repository and cd into it.
+### Docker
+To run in the production environment, replace `compose.dev.yml` with `compose.prod.yml`
+
+1. Clone the repository and cd into it.
     ```sh
     git clone https://github.com/ajtadeo/birdie-booker.git
     cd birdie-booker
     ```
-4. Create `.env` inside `birdie-booker` and add the following credentials:
+3. Create `.env.dev` and `.env.prod`
+   
+   `.env.dev`
+   ```env
+   FLASK_APP=app/__init__.py
+   FLASK_DEBUG=1
+   PORT=5000
+   ```
+
+   `.env.prod`
+   ```env
+   FLASK_APP=app/__init__.py
+   FLASK_DEBUG=0
+   PORT=4000
+   ```
+4. Start the server.
+    ```
+    docker compose -f compose.dev.yml up -d --build
+    ```
+5. Open Birdie Booker in your browser
+    * Dev: `[raspberry pi IP]:5001`
+    * Production: `[raspberry pi IP]:1337`
+6. Stop the server.
+    ```
+    docker compose -f compose.dev.yml down -v
+    ```
+
+### Helpful Docker Commands
+
+#### `docker logs [container name]`
+View a container's logs.
+
+#### `docker ps -a`
+List all containers, including inactive ones.
+
+#### `docker image list`
+List all images
+
+<!-- ### Terminal (deprecated)
+1. Install the latest Chrome for Testing and Chromedriver versions for your OS.
+    * Download Chrome for Testing and Chromedriver from [this site](https://googlechromelabs.github.io/chrome-for-testing/) to your home directory.
+    * Move `Chrome for Testing` into the same directory as `chromedriver`, should be something like `chromedriver-os`
+    * Append `export PATH=/path/to/chromedriver-os` to `.bashrc`
+2. Clone the repository and cd into it.
+    ```sh
+    git clone https://github.com/ajtadeo/birdie-booker.git
+    cd birdie-booker
+    ```
+3. Create `.env` inside `birdie-booker` and add the following credentials:
     ```env
     PUSHOVER_API_KEY='secr3t'   # Birdie Booker application key
     PUSHOVER_USER_KEY='secr3t'  # User key or Group key if using a subscription
     CHROME_BINARY_PATH="/path/to/Google Chrome for Testing"
     CHROMEDRIVER_PATH="/path/to/chromedriver"
     ```
-5. Set up the virtual environment using venv.
+4. Set up the virtual environment using venv.
      ```sh
      python3 -m venv venv
      source venv/bin/activate
      pip3 install -r requirements.txt
      ```
-6. Add executable permissions to `main.py`: `chmod +x main.py`
-7. Set up the CRON job to be run every 5 minutes.
+5. Set up the CRON job to be run every 5 minutes.
     * Create a CRON job by entering the following code in the file opened by `crontab -e`
         ```
         SHELL=/bin/bash

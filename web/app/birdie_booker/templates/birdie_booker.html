@@ -1,0 +1,91 @@
+{% extends 'app.html' %}
+
+{% block head %}
+<link href='https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/ui-lightness/jquery-ui.css' rel='stylesheet'>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+{% endblock %}
+
+{% block navBirdieBooker%}active{% endblock %}
+
+{% block contentTitle %}Birdie Booker{% endblock %}
+
+{% block contentAdder %}
+<form method='POST' action={{ url_for('birdie-booker.add') }}>
+  {{ add_form.csrf_token }}
+  <table>
+    <tr>
+      <th>Location</th>
+      <th>Players</th>
+      <th>Date</th>
+      <th>Start Time</th>
+      <th>End Time</th>
+    </tr>
+    <tr>
+      <td>
+        <div>{{ add_form.location() }}</div>
+      </td>
+      <td>
+        <div>{{ add_form.numPlayers() }}</div>
+      </td>
+      <td>
+        <div>{{ add_form.date() }}</div>
+      </td>
+      <td>
+        <div>{{ add_form.startTime() }}</div>
+      </td>
+      <td>
+        <div>{{ add_form.endTime() }}</div>
+      </td>
+    </tr>
+  </table>
+  {% if add_form.errors %}
+    <h4 class='errors-title'>Oops, your submission had errors.</h4>
+    <ul class="errors">
+        {% for field_name, field_errors in add_form.errors|dictsort if field_errors %}
+            {% for error in field_errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        {% endfor %}
+    </ul>
+  {% endif %}
+  <input type='submit' value="Add Alert">
+</form>
+{% endblock %}
+
+{% block contentCardList %}
+<table>
+  <tr>
+    <th>Alert ID</th>
+    <th>Location</th>
+    <th>Players</th>
+    <th>Date</th>
+    <th>Start Time</th>
+    <th>End Time</th>
+    <th>Expired?</th>
+    <th></th>
+  </tr>
+  {% for alert in data %}
+    <tr>
+      <td>{{ alert[0] }}</td>
+      <td>{{ locations[alert[1]|int][1] }}</td>
+      <td>{{ alert[2] }}</td>
+      <td>{{ alert[3] }}</td>
+      <td>{{ alert[4] }}</td>
+      <td>{{ alert[5] }}</td>
+      {% if alert[6] == 0 %}
+        <td>No</td>
+      {% else %}
+        <td class='expired'>Yes</td>
+      {% endif %}
+      <td>
+        <form method='POST' action={{ url_for('birdie-booker.delete') }} class='delete_button'> 
+          {{ delete_form.csrf_token }}
+          {{ delete_form.id(value=alert[0], class_='hidden') }}
+          <input type='image' src={{ url_for('static', filename='img/delete.svg') }} alt='Delete alert' width="20px">
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+{% endblock %}
