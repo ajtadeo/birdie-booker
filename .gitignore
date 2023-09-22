@@ -2,8 +2,9 @@
 .env.prod
 .vscode/
 __pycache__
-alerts.db
+*.db
 *.log
 venv/
 __pycache__
 .flaskenv
+tasks.py

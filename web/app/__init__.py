@@ -8,13 +8,12 @@ from .birdie_booker.webscraper import BirdieBookerWebscraper
 
 from .webscraper import Webscraper
 
-class Config:
-  SCHEDULER_API_ENABLED = True
-
 # initialize app
 app = Flask(__name__)
-app.config.from_object(Config())
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+app.config.from_mapping(
+  SCHEDULER_API_ENABLED=True,
+  SECRET_KEY=os.environ.get('SECRET_KEY')
+)
 
 # app routes
 app.register_blueprint(birdie_booker, url_prefix='/birdie-booker')

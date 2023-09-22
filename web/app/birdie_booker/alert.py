@@ -2,10 +2,29 @@ import os
 import sqlite3
 from datetime import datetime, timedelta
 
+def init_alerts():
+	path = os.path.dirname(__file__)
+	conn = sqlite3.connect(os.path.join(path, "birdie_booker.db"))
+	cursor = conn.cursor()
+	sql = """
+	CREATE TABLE IF NOT EXISTS `alerts` (
+		`id` INTEGER PRIMARY KEY,
+		`location` INTEGER,
+		`numPlayers` INTEGER,
+		`date` TEXT,
+		`startTime` TEXT,
+		`endTime` TEXT,
+		`isExpired` INTEGER DEFAULT 0
+	)
+	"""
+	cursor.execute(sql)
+	conn.commit()
+	conn.close()
+
 def get_alerts():
 	try:
 		path = os.path.dirname(__file__)
-		conn = sqlite3.connect(os.path.join(path, "alerts.db"))
+		conn = sqlite3.connect(os.path.join(path, "birdie_booker.db"))
 		cursor = conn.cursor()
 		alerts = conn.execute("SELECT * FROM `alerts`").fetchall()
 		conn.close()
@@ -22,7 +41,7 @@ def save_alert(location, numPlayers, date, startTime, endTime, isExpired):
 	"""
 	try:
 		path = os.path.dirname(__file__)
-		conn = sqlite3.connect(os.path.join(path, "alerts.db"))
+		conn = sqlite3.connect(os.path.join(path, "birdie_booker.db"))
 		cursor = conn.cursor()
 		cursor.execute(sql, (location, numPlayers, date, startTime, endTime, isExpired))
 		conn.commit()
@@ -39,7 +58,7 @@ def delete_alert(id):
 	"""
 	try:
 		path = os.path.dirname(__file__)
-		conn = sqlite3.connect(os.path.join(path, "alerts.db"))
+		conn = sqlite3.connect(os.path.join(path, "birdie_booker.db"))
 		cursor = conn.cursor()
 		cursor.execute(sql)
 		conn.commit()
@@ -57,7 +76,7 @@ def set_expired_alert(id):
 	"""
 	try:
 		path = os.path.dirname(__file__)
-		conn = sqlite3.connect(os.path.join(path, "alerts.db"))
+		conn = sqlite3.connect(os.path.join(path, "birdie_booker.db"))
 		cursor = conn.cursor()
 		cursor.execute(sql)
 		conn.commit()

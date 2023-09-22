@@ -3,14 +3,19 @@ from datetime import datetime
 from flask_wtf import FlaskForm
 from wtforms import Form, DateField, SelectField, TimeField, IntegerField
 from wtforms.validators import InputRequired, ValidationError
-from .alert import get_alerts, save_alert, delete_alert, set_expired_alert
-
-LOCATIONS = [
-	(0, 'Recreation Park 18 Golf Course')
-]
+from app.birdie_booker.alert import get_alerts, save_alert, delete_alert, set_expired_alert
+from app.birdie_booker.location import get_locations
 
 birdie_booker = Blueprint("birdie-booker", __name__, template_folder='templates')
- 
+
+locations = get_locations()
+location_dict = {}
+location_choices = []
+for loc in locations:
+  location_dict[loc[0]] = loc[1]
+  location_choices.append((loc[0], loc[1]))
+location_choices_sorted = sorted(location_choices, key=lambda x: x[1])
+  
 def validate_date(form, date):
 	if date.data < datetime.today().date():
 		raise ValidationError("Date must be today or a future date.")
@@ -22,7 +27,7 @@ def validate_endTime(form, endTime):
 class AddForm(FlaskForm):
 	location = SelectField('Location', [
 		InputRequired()
-	], choices=LOCATIONS)
+	], choices=location_choices_sorted)
 
 	numPlayers = SelectField('Number of Players', [
 		InputRequired()
@@ -48,13 +53,10 @@ class DeleteForm(FlaskForm):
 @birdie_booker.route("/")
 def index():
 	alerts = get_alerts()
-	print(alerts)
-	# save_alert(0, 4, 'Wed 09/13/2023', '07:00 AM', '08:00 AM', 0) # used for testing expired alerts
- 
 	add_form = AddForm()
 	delete_form = DeleteForm()
 	
-	return render_template("birdie_booker.html", data=alerts, add_form=add_form, delete_form=delete_form, locations=LOCATIONS)
+	return render_template("birdie_booker.html", data=alerts, add_form=add_form, delete_form=delete_form, locations=location_dict)
 
 @birdie_booker.route("/add", methods=['POST'])
 def add():
@@ -74,7 +76,7 @@ def add():
 		save_alert(location=location, numPlayers=numPlayers, date=date, startTime=startTime, endTime=endTime, isExpired=isExpired)
 		return redirect(url_for("birdie-booker.index"))
 
-	return render_template("birdie_booker.html", data=alerts, add_form=add_form, delete_form=delete_form, locations=LOCATIONS)
+	return render_template("birdie_booker.html", data=alerts, add_form=add_form, delete_form=delete_form, locations=location_dict)
 
 @birdie_booker.route("/delete", methods=['POST'])
 def delete():
@@ -87,4 +89,4 @@ def delete():
 		delete_alert(id)
 		return redirect(url_for("birdie-booker.index"))
 	
-	return render_template("birdie_booker.html", data=alerts, add_form=add_form, delete_form=delete_form, locations=LOCATIONS)
+	return render_template("birdie_booker.html", data=alerts, add_form=add_form, delete_form=delete_form, locations=location_dict)

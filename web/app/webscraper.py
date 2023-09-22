@@ -30,17 +30,18 @@ class Webscraper:
   
   def send_notif(self, message, url, url_title):
     print("Sending a Pushover notification...")
-    url = 'https://api.pushover.net/1/messages.json'
+    pushover_url = 'https://api.pushover.net/1/messages.json'
     params = {
       "token": os.environ.get("PUSHOVER_API_KEY"),
       "user": os.environ.get("PUSHOVER_USER_KEY"),
       "message": message,
       "url" : url,
       "url_title" : url_title,
+      "priority": 1
     }
 
     try:
-      r = requests.post(url, params=params)
+      r = requests.post(pushover_url, params=params)
       r.raise_for_status()
       print(r.json())
     except requests.exceptions.RequestException as e:

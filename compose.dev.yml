@@ -3,7 +3,7 @@ services:
     build: ./web
     command: python manage.py run -h 0.0.0.0
     volumes:
-      - ./web/app/birdie_booker/alerts.db:/app/app/birdie_booker/alerts.db
+      - ./web/app/birdie_booker/birdie_booker.db:/app/app/birdie_booker/birdie_booker.db
     ports:
       - 5001:5000
     env_file:

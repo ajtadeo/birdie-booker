@@ -68,7 +68,7 @@
   {% for alert in data %}
     <tr>
       <td>{{ alert[0] }}</td>
-      <td>{{ locations[alert[1]|int][1] }}</td>
+      <td>{{ locations[alert[1]|int] }}</td>
       <td>{{ alert[2] }}</td>
       <td>{{ alert[3] }}</td>
       <td>{{ alert[4] }}</td>
