@@ -7,12 +7,12 @@
   <link rel="stylesheet" href="{{ url_for('static', filename= 'css/app.css') }}">
   {% block head %}{% endblock %}
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Roboto:ital@0;1&display=swap" rel="stylesheet"> 
-  <title>Web Scraper 9000</title>
+  <title>Yugi Books</title>
 </head>
 
 <body>
   <div class="menu">
-    <h3 class='menu-title'><a href={{ url_for('home') }}>Web Scraper 9000</a></h3>
+    <h3 class='menu-title'><a href={{ url_for('home') }}>Scrapenado</a></h3>
     <ul class='menu-item-list'>
       <li class={% block navBirdieBooker %}{% endblock %}>
         <a href={{ url_for('birdie-booker.index') }}>Birdie Booker</a>

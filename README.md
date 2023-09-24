@@ -1,18 +1,21 @@
-# Birdie Booker <!-- omit in toc -->
-This terminal-based application is a clone of [TeeTime Alerts](https://teetimealerts.io/) built using Selenium for web scraping and Pushover for sending mobile device notifications.
+# Yugi Books <!-- omit in toc -->
+This website is a hub for web scraping applications making automatic reservation bookings. Yugi Books is built using the Python Flask web framework, Selenium fro web scraping, Pushover for sending mobile device notifications, and Docker, NGINX, and a Raspberry Pi for deployment over a local network. 
+
+*Current Yugi Books applications:*
+* Birdie Blitz: golf tee time alerts for select Southern California courses
 
 ### Table of Contents <!-- omit in toc -->
 - [Setup](#setup)
   - [Pushover](#pushover)
+  - [Raspberry Pi](#raspberry-pi)
   - [Docker](#docker)
-  - [Helpful Docker Commands](#helpful-docker-commands)
-    - [`docker logs [container name]`](#docker-logs-container-name)
-    - [`docker ps -a`](#docker-ps--a)
-    - [`docker image list`](#docker-image-list)
-- [Available Commands](#available-commands)
-  - [`python3 main.py`](#python3-mainpy)
-  - [`python3 main.py [-l | --list]`](#python3-mainpy--l----list)
-  - [`python3 main.py [-s | --scrape]`](#python3-mainpy--s----scrape)
+  - [Flask](#flask)
+
+<!-- ## Application Organization
+
+### Dev
+
+### Prod -->
 
 ## Setup
 
@@ -22,13 +25,21 @@ This terminal-based application is a clone of [TeeTime Alerts](https://teetimeal
 3. Install Pushover on your mobile device and login.
 4. (Optional) In the application dashboard, create a subscription to allow multiple people to join the app. In later steps, use the group key instead of the user key.
     
-### Docker
-To run in the production environment, replace `compose.dev.yml` with `compose.prod.yml`
+### Raspberry Pi
+For production, this Yugi Books is deployed over a local network by a Raspberry Pi using NGINX. All Docker setup is done on the Raspberry Pi via an SSH connection. 
+1. Install Rasberry Pi OS version 11 (Bullseye) or higher.
+2. Install Docker using this tutorial: [https://docs.docker.com/engine/install/raspberry-pi-os/](https://docs.docker.com/engine/install/raspberry-pi-os/)
+3. Set a static IP for the Raspberry Pi by following this tutorial: [https://www.tomshardware.com/how-to/static-ip-raspberry-pi](https://www.tomshardware.com/how-to/static-ip-raspberry-pi)
+4. Note the static IP for Docker setup.
 
-1. Clone the repository and cd into it.
+### Docker
+To run in the production environment, replace `compose.dev.yml` with `compose.prod.yml`. 
+
+1. Open Docker on your machine.
+2. Clone the repository and cd into `yugi-books`.
     ```sh
-    git clone https://github.com/ajtadeo/birdie-booker.git
-    cd birdie-booker
+    git clone https://github.com/ajtadeo/yugi-books.git
+    cd yugi-books
     ```
 3. Create `.env.dev` and `.env.prod`
    
@@ -37,6 +48,16 @@ To run in the production environment, replace `compose.dev.yml` with `compose.pr
    FLASK_APP=app/__init__.py
    FLASK_DEBUG=1
    PORT=5000
+   PYTHONDONTWRITEBYTECODE=1
+   PYTHONUNBUFFERED=1
+   SECRET_KEY=s3cret
+   CSRF_SECRET=s3cret
+
+   PUSHOVER_API_KEY=s3cret
+   PUSHOVER_USER_KEY=s3cret
+
+   CHROME_BINARY_PATH=/path/to/Google Chrome for Testing
+   CHROMEDRIVER_PATH=/path/to/chromedriver
    ```
 
    `.env.prod`
@@ -44,12 +65,22 @@ To run in the production environment, replace `compose.dev.yml` with `compose.pr
    FLASK_APP=app/__init__.py
    FLASK_DEBUG=0
    PORT=4000
+   PYTHONDONTWRITEBYTECODE=1
+   PYTHONUNBUFFERED=1
+   SECRET_KEY=s3cret
+   CSRF_SECRET=s3cret
+
+   PUSHOVER_API_KEY=s3cret
+   PUSHOVER_USER_KEY=s3cret
+
+   CHROME_BINARY_PATH=/path/to/Google Chrome for Testing
+   CHROMEDRIVER_PATH=/path/to/chromedriver
    ```
 4. Start the server.
     ```
     docker compose -f compose.dev.yml up -d --build
     ```
-5. Open Birdie Booker in your browser
+5. Open Yugi Books in your browser
     * Dev: `[raspberry pi IP]:5001`
     * Production: `[raspberry pi IP]:1337`
 6. Stop the server.
@@ -57,33 +88,43 @@ To run in the production environment, replace `compose.dev.yml` with `compose.pr
     docker compose -f compose.dev.yml down -v
     ```
 
-### Helpful Docker Commands
+*Helpful Docker Commands*
+* `docker logs [container name]`
+  * View a container's logs.
+* `docker ps -a`
+  * List all containers, including inactive ones.
+* `docker image list`
+  * List all images
 
-#### `docker logs [container name]`
-View a container's logs.
+### Flask
+Sometimes it's easier to host Yugi Books as a normal Flask app without Docker, especially if the developer's changes cause frequent application crashes. These crashes cause the docker container to immediately shut down, so re-composing the container can get tiring. These hosting steps are an alternate option for situations with frequent crashing.
 
-#### `docker ps -a`
-List all containers, including inactive ones.
-
-#### `docker image list`
-List all images
-
-<!-- ### Terminal (deprecated)
 1. Install the latest Chrome for Testing and Chromedriver versions for your OS.
-    * Download Chrome for Testing and Chromedriver from [this site](https://googlechromelabs.github.io/chrome-for-testing/) to your home directory.
-    * Move `Chrome for Testing` into the same directory as `chromedriver`, should be something like `chromedriver-os`
-    * Append `export PATH=/path/to/chromedriver-os` to `.bashrc`
-2. Clone the repository and cd into it.
+    * Download Chrome for Testing and Chromedriver from [this site](https://googlechromelabs.github.io/chrome-for-testing/).
+    * Move `Chrome for Testing` into the same directory as `chromedriver`
+    * Append `export PATH=/path/to/chromedriver` to your run command file, usually `.bashrc` for MacOS.
+2. Clone the repository and cd into `web`. Stay in this directory for the remainder of setup.
     ```sh
-    git clone https://github.com/ajtadeo/birdie-booker.git
-    cd birdie-booker
+    git clone https://github.com/ajtadeo/yugi-books.git
+    cd yugi-books/web
     ```
-3. Create `.env` inside `birdie-booker` and add the following credentials:
+3. Create `.flaskenv` and add the following credentials:
     ```env
-    PUSHOVER_API_KEY='secr3t'   # Birdie Booker application key
-    PUSHOVER_USER_KEY='secr3t'  # User key or Group key if using a subscription
-    CHROME_BINARY_PATH="/path/to/Google Chrome for Testing"
-    CHROMEDRIVER_PATH="/path/to/chromedriver"
+    FLASK_APP=app/__init__.py
+    FLASK_DEBUG=1
+    HOST='127.0.0.1'
+    PORT=5000
+
+    PYTHONDONTWRITEBYTECODE=1
+    PYTHONUNBUFFERED=1
+    SECRET_KEY=s3cret
+    CSRF_SECRET=s3cret
+
+    PUSHOVER_API_KEY=s3cret
+    PUSHOVER_USER_KEY=s3cret
+
+    CHROME_BINARY_PATH=/path/to/Google Chrome for Testing
+    CHROMEDRIVER_PATH=/path/to/chromedriver
     ```
 4. Set up the virtual environment using venv.
      ```sh
@@ -91,23 +132,8 @@ List all images
      source venv/bin/activate
      pip3 install -r requirements.txt
      ```
-5. Set up the CRON job to be run every 5 minutes.
-    * Create a CRON job by entering the following code in the file opened by `crontab -e`
-        ```
-        SHELL=/bin/bash
-        BASH_ENV=~/.bashrc
-        */5 * * * * cd /path/to/birdie-booker; source venv/bin/activate; python3 /path/to/birdie-booker/main.py -s > /path/to/birdie-booker/cron.log 2>&1; deactivate
-        ```
-    * Make sure the `*/5 * * * * ...` command is all on one line, otherwise `crontab` will complain.
-    * Check that the CRON job was created using `crontab -l`
-
-## Available Commands
-
-### `python3 main.py`
-Creates an Alert and stores it in the database.
-
-### `python3 main.py [-l | --list]`
-Lists the Alerts currently in the database.
-
-### `python3 main.py [-s | --scrape]`
-Runs the web scrapers fro all Alerts currently in the database.
+5. Start the server.
+    ```sh
+    run flask
+    ```
+6. Open Yugi Books in your browser at `127.0.0.1:5001`
