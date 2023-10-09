@@ -33,7 +33,7 @@ webscrapers = [
 
 @scheduler.task("cron", id="scrape", minute="*/5")
 def scrape():
-  print(f"Starting cron at {datetime.now()}...\n=======================\n")
-  for wb in webscrapers:
-    wb.scrape()
+  print(f"Starting cron at {datetime.now(tz='PST')}...\n=======================\n")
+  for w in webscrapers:
+    w.scrape()
   print(f"\n=======================\nCron completed at {datetime.now()}.")

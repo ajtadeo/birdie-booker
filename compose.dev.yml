@@ -1,10 +1,18 @@
 services:
   web:
     build: ./web
-    command: python manage.py run -h 0.0.0.0
+    # command: bash -c "python manage.py run -h 0.0.0.0"
+    command: bash -c "./wait_for_selenium.sh && python manage.py run -h 0.0.0.0"
     volumes:
       - ./web/app/birdie_booker/birdie_booker.db:/app/app/birdie_booker/birdie_booker.db
     ports:
       - 5001:5000
     env_file:
       - ./.env.dev
+    depends_on:
+      - selenium
+  selenium:
+    image: seleniarm/standalone-chromium:latest
+    ports:
+      - 5555:5555
+    shm_size: 2g

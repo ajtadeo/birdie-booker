@@ -55,9 +55,6 @@ To run in the production environment, replace `compose.dev.yml` with `compose.pr
 
    PUSHOVER_API_KEY=s3cret
    PUSHOVER_USER_KEY=s3cret
-
-   CHROME_BINARY_PATH=/path/to/Google Chrome for Testing
-   CHROMEDRIVER_PATH=/path/to/chromedriver
    ```
 
    `.env.prod`
@@ -72,17 +69,15 @@ To run in the production environment, replace `compose.dev.yml` with `compose.pr
 
    PUSHOVER_API_KEY=s3cret
    PUSHOVER_USER_KEY=s3cret
-
-   CHROME_BINARY_PATH=/path/to/Google Chrome for Testing
-   CHROMEDRIVER_PATH=/path/to/chromedriver
    ```
-4. Start the server.
+4. In `web/app/birdie_booker` create `birdie_booker.db`
+4. In the root directory, start the server.
     ```
-    docker compose -f compose.dev.yml up -d --build
+    docker compose -f compose.dev.yml up --build
     ```
 5. Open Yugi Books in your browser
-    * Dev: `[raspberry pi IP]:5001`
-    * Production: `[raspberry pi IP]:1337`
+    * Dev: `<Raspberry Pi IP>:5001`
+    * Production: `<Raspberry Pi IP>:1337`
 6. Stop the server.
     ```
     docker compose -f compose.dev.yml down -v
@@ -122,9 +117,6 @@ Sometimes it's easier to host Yugi Books as a normal Flask app without Docker, e
 
     PUSHOVER_API_KEY=s3cret
     PUSHOVER_USER_KEY=s3cret
-
-    CHROME_BINARY_PATH=/path/to/Google Chrome for Testing
-    CHROMEDRIVER_PATH=/path/to/chromedriver
     ```
 4. Set up the virtual environment using venv.
      ```sh

@@ -1,29 +1,33 @@
 import os
 import requests
 
-import undetected_chromedriver as uc
+# import undetected_chromedriver as uc
+from selenium import webdriver
 from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.chrome.service import Service
 
 class Webscraper:
   """ 
-  This is the base Webscraper class which hosts an instance of Undetected Chromedriver for all scraping tasks.
-  
-    * Undetected Chrome Driver: major version 117
-    * Chrome Binary: major version 117
+  This is the base Webscraper class which hosts an instance of Chromedriver for all scraping tasks.
   """
   def __init__(self):
-    options = uc.ChromeOptions()
-    options.binary_location = os.environ.get("CHROME_BINARY_PATH")
+    print("Initializing webscraper...")
+    options = webdriver.ChromeOptions()
     options.add_argument('--headless=new')
     options.add_argument("--disable-gpu")
     options.add_argument('--blink-settings=imagesEnabled=false')
 
-    self.driver = uc.Chrome(service=Service(executable_path=os.environ.get("CHROMEDRIVER_PATH")), options=options, version_main=117)
+    # services in a docker network are accessible by http://<service name>:<port>
+    self.driver = webdriver.Remote(
+      command_executor=f'http://selenium:4444/wd/hub', 
+      options=options
+    )
     self.wait = WebDriverWait(self.driver, 10)
     
   def __del__(self):
-    self.driver.quit()
+    try:
+      self.driver.quit()
+    except AttributeError:
+      print("Webscraper failed to build.")
     
   def scrape(self):
     pass

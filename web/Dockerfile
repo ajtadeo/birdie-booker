@@ -4,6 +4,10 @@ FROM python:3.9-bullseye
 # set work directory
 WORKDIR /app
 
+# install jq
+RUN apt-get update && \
+  apt-get install -y jq
+
 # install dependencies
 RUN pip install --upgrade pip
 COPY ./requirements.txt /app
